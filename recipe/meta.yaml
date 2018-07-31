@@ -52,7 +52,7 @@ test:
     - python -m pytest --pyargs osqp -k 'not codegen_'
 
 about:
-  home: http://osqp.readthedocs.io/
+  home: https://osqp.org/
   license: Apache-2.0
   license_family: Apache
   license_file: LICENSE
@@ -62,7 +62,7 @@ about:
 
     To use the `codegen` interface, install `cmake` and an appropriate
     compiler version. (We don't install this by default.)
-  doc_url: http://osqp.readthedocs.io/
+  doc_url: https://osqp.org/
   dev_url: http://github.com/oxfordcontrol/osqp-python
 
 extra:

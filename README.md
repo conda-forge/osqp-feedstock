@@ -1,7 +1,7 @@
 About osqp
 ==========
 
-Home: http://osqp.readthedocs.io/
+Home: https://osqp.org/
 
 Package license: Apache-2.0
 
