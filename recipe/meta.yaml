@@ -55,6 +55,8 @@ test:
     - {{ compiler('cxx') }}
     - cmake
     - pytest
+    # some of the tests need mkl-specific solvers
+    - blas=*=mkl
   commands:
     # codegen interface requires compiler + cmake
     - python -m pytest --pyargs osqp
