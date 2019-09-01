@@ -52,6 +52,8 @@ test:
     - osqp.codegen
     - osqppurepy
   requires:
+    # some of the tests need mkl-specific solvers
+    - blas=*=mkl
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - cmake
