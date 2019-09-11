@@ -19,14 +19,7 @@ Current build status
 ====================
 
 
-<table><tr>
-    <td>Appveyor</td>
-    <td>
-      <a href="https://ci.appveyor.com/project/conda-forge/osqp-feedstock/branch/master">
-        <img alt="windows" src="https://img.shields.io/appveyor/ci/conda-forge/osqp-feedstock/master.svg?label=Windows">
-      </a>
-    </td>
-  </tr>
+<table>
     
   <tr>
     <td>Azure</td>
@@ -201,6 +194,8 @@ In order to produce a uniquely identifiable distribution:
 Feedstock Maintainers
 =====================
 
+* [@bstellato](https://github.com/bstellato/)
 * [@dougalsutherland](https://github.com/dougalsutherland/)
+* [@gbanjac](https://github.com/gbanjac/)
 * [@h-vetinari](https://github.com/h-vetinari/)
 
