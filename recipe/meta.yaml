@@ -27,7 +27,7 @@ source:
 build:
   number: 2
   script: python -m pip install --no-deps --ignore-installed .
-  skip: true  # [win and py==27]
+  skip: true  # [py==27 and (win or ppc64le)]
 
 requirements:
   build:
