@@ -15,6 +15,7 @@ source:
     - patches/0001-setup-use-NMake-on-windows.patch
     - patches/0002-setup-do-not-use-different-output-folder-on-windows.patch
     - patches/0003-also-use-NMake-in-codegen.patch
+    - patches/0004-disable-MKL-test-on-nonx86.patch     # [not x86_64]
 
   - url: https://github.com/oxfordcontrol/osqp/archive/v{{ osqp_version }}.tar.gz
     fn: osqp-{{ osqp_version }}.tar.gz
@@ -35,7 +36,7 @@ requirements:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - cmake
-    - make
+    - make                           # [unix]
   host:
     - python
     - pip
@@ -54,12 +55,12 @@ test:
     - osqppurepy
   requires:
     # some of the tests need mkl-specific solvers
-    - blas=*=mkl
+    - blas=*=mkl                     # [x86_64]
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - cmake
     - pytest
-    - make
+    - make                           # [unix]
   commands:
     # codegen interface requires compiler + cmake
     - python -m pytest --pyargs osqp
@@ -84,3 +85,4 @@ extra:
     - h-vetinari
     - bstellato
     - gbanjac
+    - jayfurmanek
