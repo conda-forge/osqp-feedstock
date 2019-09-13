@@ -11,8 +11,7 @@ source:
   - url: https://github.com/oxfordcontrol/osqp-python/archive/v{{ osqp_python_version }}.tar.gz
     fn: osqp-python-{{ osqp_python_version }}.tar.gz
     sha256: bfd8ccc4ccf2c7be1e8798bcc828e9b773a707deb2678a62d82396048e009742
-    patches:
-      - patches/0001-fix-Visual-Studio-Windows.patch
+    # patches:
     # - patches/0001-setup-use-NMake-on-windows.patch
     # - patches/0002-setup-do-not-use-different-output-folder-on-windows.patch
     # - patches/0003-also-use-NMake-in-codegen.patch
