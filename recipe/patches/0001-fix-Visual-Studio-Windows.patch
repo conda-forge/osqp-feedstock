@@ -1,0 +1,13 @@
+diff --git a/setup.py b/setup.py
+index 27a3dd8..e01342e 100644
+--- a/setup.py
++++ b/setup.py
+@@ -21,7 +21,7 @@ lib_subdir = []
+ # Check if windows linux or mac to pass flag
+ if system() == 'Windows':
+     if sys.version_info.major == 3:
+-        cmake_args += ['-G', 'Visual Studio 14 2015']
++        cmake_args += ['-G', 'Visual Studio 14 2015 Win64']
+     else:
+         cmake_args += ['-G', 'Visual Studio 9 2008']
+     # Differentiate between 32-bit and 64-bit
