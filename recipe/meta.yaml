@@ -54,7 +54,7 @@ test:
     - osqppurepy
   requires:
     # some of the tests need mkl-specific solvers
-    - blas=*=mkl
+    - blas=*=mkl                    # [not ppc64le]
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - cmake
