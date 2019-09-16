@@ -28,13 +28,14 @@ source:
 build:
   number: 0
   script: python -m pip install --no-deps --ignore-installed .
-  skip: true  # [win and py==27]
+  skip: true  # [py==27 and (win or ppc64le)]
 
 requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - cmake
+    - make                           # [unix]
   host:
     - python
     - pip
@@ -58,6 +59,7 @@ test:
     - {{ compiler('cxx') }}
     - cmake
     - pytest
+    - make                           # [unix]
   commands:
     # codegen interface requires compiler + cmake
     - python -m pytest --pyargs osqp
@@ -82,3 +84,4 @@ extra:
     - h-vetinari
     - bstellato
     - gbanjac
+    - jayfurmanek
