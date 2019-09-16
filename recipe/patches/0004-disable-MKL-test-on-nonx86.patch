@@ -1,0 +1,24 @@
+From e3fbac6ce0f77a6698d608d30135bf173970e44d Mon Sep 17 00:00:00 2001
+From: Jason Furmanek <furmanek@us.ibm.com>
+Date: Thu, 12 Sep 2019 19:21:41 +0000
+Subject: [PATCH] Disable MKL Tests on nonx86
+
+---
+ module/tests/mkl_pardiso_test.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/module/tests/mkl_pardiso_test.py b/module/tests/mkl_pardiso_test.py
+index 72ba3dd..e622933 100644
+--- a/module/tests/mkl_pardiso_test.py
++++ b/module/tests/mkl_pardiso_test.py
+@@ -20,6 +20,7 @@ class mkl_pardiso_tests(unittest.TestCase):
+         self.l = np.array([0.0, 0.0])
+         self.u = np.array([100.0, 100.0])
+
++    @unittest.skip("MKL Tests are only relevant x86_64 systems")
+     def test_issue14(self):
+
+         m = osqp.OSQP()
+-- 
+2.22.0
+
