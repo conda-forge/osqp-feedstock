@@ -62,12 +62,12 @@ test:
     - {{ compiler('cxx') }}
     - make                           # [unix]
     - cmake
-    - cvxpy
+    - cvxpy                           # [not (ppc64le and python_impl == "pypy" and py37)]
     - pytest
     - setuptools
   commands:
     # codegen interface requires compiler + cmake
-    - python -m pytest --pyargs osqp
+    - python -m pytest --pyargs osqp  # [not (ppc64le and python_impl == "pypy" and py37)]
 
 about:
   home: https://osqp.org/
