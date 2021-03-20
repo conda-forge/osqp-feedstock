@@ -43,6 +43,7 @@ requirements:
     - python
     - pip
     - numpy
+    - libosqp
   run:
     - python
     - {{ pin_compatible('numpy') }}
