@@ -15,6 +15,7 @@ source:
     - patches/0002-setup-do-not-use-different-output-folder-on-windows.patch
     - patches/0003-also-use-NMake-in-codegen.patch
     - patches/0004-Disable-MKL-Tests-on-nonx86.patch     # [not x86_64]
+    - patches/ 0005-support-external-osqp.patch
 
   - url: https://github.com/oxfordcontrol/osqp/archive/v{{ osqp_version }}.tar.gz
     fn: osqp-{{ osqp_version }}.tar.gz
