@@ -1,0 +1,84 @@
+From ae97be145eab10836bdc508ca12ba5b5dacc1081 Mon Sep 17 00:00:00 2001
+From: Silvio Traversaro <silvio@traversaro.it>
+Date: Sat, 20 Mar 2021 16:06:42 +0100
+Subject: [PATCH] Update setup.py
+
+---
+ setup.py | 40 +++++++++++++++++++++++++---------------
+ 1 file changed, 25 insertions(+), 15 deletions(-)
+
+diff --git a/setup.py b/setup.py
+index 535a3c0..5d0dccc 100644
+--- a/setup.py
++++ b/setup.py
+@@ -33,6 +33,12 @@
+     action='store_true',
+     default=False,
+     help='Compile extension in debug mode')
++parser.add_argument(
++    '--use_external_osqp',
++    dest='use_external_osqp',
++    action='store_true',
++    default=False,
++    help='Use external osqp instead of building a static one for the python extension.')
+ args, unknown = parser.parse_known_args()
+ 
+ # necessary to remove OSQP args before passing to setup:
+@@ -44,6 +50,7 @@
+ cmake_build_flags = []
+ define_macros = []
+ lib_subdir = []
++use_external_osqp = args.use_external_osqp
+ 
+ # Check if windows linux or mac to pass flag
+ if system() == 'Windows':
+@@ -130,7 +137,9 @@ def __str__(self):
+     # They moved the stdio library to another place.
+     # We need to include this to fix the dependency
+     libraries += ['legacy_stdio_definitions']
+-
++if use_external_osqp:
++    libraries += ['osqp']
++    
+ # Add OSQP compiled library
+ extra_objects = [os.path.join('extension', 'src', lib_name)]
+ 
+@@ -212,23 +221,24 @@ def build_extensions(self):
+         os.makedirs(osqp_build_dir)
+         os.chdir(osqp_build_dir)
+ 
+-        try:
+-            check_output(['cmake', '--version'])
+-        except OSError:
+-            raise RuntimeError("CMake must be installed to build OSQP")
++        if not use_external_osqp:
++            try:
++                check_output(['cmake', '--version'])
++            except OSError:
++                raise RuntimeError("CMake must be installed to build OSQP")
+ 
+-        # Compile static library with CMake
+-        call(['cmake'] + cmake_args + ['..'])
+-        call(['cmake', '--build', '.', '--target', 'osqpstatic'] +
+-             cmake_build_flags)
++            # Compile static library with CMake
++            call(['cmake'] + cmake_args + ['..'])
++            call(['cmake', '--build', '.', '--target', 'osqpstatic'] +
++                 cmake_build_flags)
+ 
+-        # Change directory back to the python interface
+-        os.chdir(current_dir)
++            # Change directory back to the python interface
++            os.chdir(current_dir)
+ 
+-        # Copy static library to src folder
+-        lib_origin = [osqp_build_dir, 'out'] + lib_subdir + [lib_name]
+-        lib_origin = os.path.join(*lib_origin)
+-        copyfile(lib_origin, os.path.join('extension', 'src', lib_name))
++            # Copy static library to src folder
++            lib_origin = [osqp_build_dir, 'out'] + lib_subdir + [lib_name]
++            lib_origin = os.path.join(*lib_origin)
++            copyfile(lib_origin, os.path.join('extension', 'src', lib_name))
+ 
+         # Run extension
+         build_ext.build_extensions(self)

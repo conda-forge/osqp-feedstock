@@ -15,6 +15,7 @@ source:
     - patches/0002-setup-do-not-use-different-output-folder-on-windows.patch
     - patches/0003-also-use-NMake-in-codegen.patch
     - patches/0004-Disable-MKL-Tests-on-nonx86.patch     # [not x86_64]
+    - patches/0005-support-external-osqp.patch
 
   - url: https://github.com/oxfordcontrol/osqp/archive/v{{ osqp_version }}.tar.gz
     fn: osqp-{{ osqp_version }}.tar.gz
@@ -27,8 +28,8 @@ source:
     folder: osqp_sources/lin_sys/direct/qdldl/qdldl_sources
 
 build:
-  number: 1
-  script: {{ PYTHON }} -m pip install . --no-deps -vv
+  number: 2
+  script: {{ PYTHON }} -m pip install --use_external_osqp . --no-deps -vv
 
 requirements:
   build:
@@ -43,6 +44,7 @@ requirements:
     - python
     - pip
     - numpy
+    - libosqp
   run:
     - python
     - {{ pin_compatible('numpy') }}
