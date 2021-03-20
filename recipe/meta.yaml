@@ -29,7 +29,7 @@ source:
 
 build:
   number: 2
-  script: {{ PYTHON }} -m pip install . --no-deps --use_external_osqp -vv
+  script: {{ PYTHON }} -m pip install --use_external_osqp . --no-deps -vv
 
 requirements:
   build:
