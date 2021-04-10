@@ -1,14 +1,12 @@
-{% set name = "osqp" %}
-{% set osqp_version = "0.6.2" %}
-{% set qdldl_version = "0.1.5" %}
+{% set version = "0.6.2" %}
 
 package:
-  name: {{ name|lower }}
-  version: {{ osqp_version }}
+  name: osqp
+  version: {{ version }}
 
 source:
-  - url: https://github.com/oxfordcontrol/osqp-python/archive/v{{ osqp_version }}.tar.gz
-    fn: osqp-python-{{ osqp_version }}.tar.gz
+  - url: https://github.com/oxfordcontrol/osqp-python/archive/v{{ version }}.tar.gz
+    fn: osqp-python-{{ version }}.tar.gz
     sha256: 7f8d4588f7173e2abb72570c27981168ae3142c8356af52a41e500695ee3d1bf
     patches:
     - patches/0001-setup-use-NMake-on-windows.patch
@@ -16,18 +14,13 @@ source:
     - patches/0003-also-use-NMake-in-codegen.patch
     - patches/0004-Disable-MKL-Tests-on-nonx86.patch     # [not x86_64]
 
-  - url: https://github.com/oxfordcontrol/osqp/archive/v{{ osqp_version }}.tar.gz
-    fn: osqp-{{ osqp_version }}.tar.gz
+  - url: https://github.com/oxfordcontrol/osqp/archive/v{{ version }}.tar.gz
+    fn: osqp-{{ version }}.tar.gz
     sha256: d973c33c3164caa381ed7387375347a46f7522523350a4e51989479b9d3b59c7
     folder: osqp_sources
 
-  - url: https://github.com/oxfordcontrol/qdldl/archive/v{{ qdldl_version }}.tar.gz
-    fn: qdldl-{{ qdldl_version }}.tar.gz
-    sha256: 2868b0e61b7424174e9adef3cb87478329f8ab2075211ef28fe477f29e0e5c99
-    folder: osqp_sources/lin_sys/direct/qdldl/qdldl_sources
-
 build:
-  number: 1
+  number: 2
   script: {{ PYTHON }} -m pip install . --no-deps -vv
 
 requirements:
