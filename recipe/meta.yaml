@@ -36,10 +36,10 @@ requirements:
     - python
     - pip
     - numpy
+    - qdldl-python
   run:
     - python
     - {{ pin_compatible('numpy') }}
-    - qdldl-python
     - scipy
     - vs2015_runtime                 # [win]
 
