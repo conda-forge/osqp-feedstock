@@ -59,6 +59,7 @@ test:
   requires:
     # some of the tests need mkl-specific solvers
     - blas=*=mkl                     # [x86_64]
+    - blas=*=netlib                  # [ppc64le]
     # codegen interface requires compiler + cmake
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
