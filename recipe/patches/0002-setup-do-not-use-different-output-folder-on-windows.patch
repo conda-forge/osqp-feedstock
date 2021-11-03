@@ -1,7 +1,7 @@
 From 8ee439ec739fd76b730bc8414d99f453543f64e7 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Thu, 29 Aug 2019 09:33:23 +0200
-Subject: [PATCH 2/4] setup: do not use different output folder on windows
+Subject: [PATCH 2/5] setup: do not use different output folder on windows
 
 ---
  setup.py | 2 +-
@@ -21,5 +21,5 @@ index 30fa4c1..9b8bcb5 100644
  else:  # Linux or Mac
      cmake_args += ['-G', 'Unix Makefiles']
 -- 
-2.29.2.windows.3
+2.32.0.windows.2
 

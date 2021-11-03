@@ -1,7 +1,7 @@
 From c8ea8b5ba3f8a6a067fbd2490b3764eaf8bbc2a3 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Thu, 29 Aug 2019 14:13:50 +0200
-Subject: [PATCH 3/4] also use NMake in codegen
+Subject: [PATCH 3/5] also use NMake in codegen
 
 ---
  module/interface.py | 4 ++--
@@ -24,5 +24,5 @@ index 82686b0..6ba0a74 100644
                  project_type = 'Unix Makefiles'
  
 -- 
-2.29.2.windows.3
+2.32.0.windows.2
 

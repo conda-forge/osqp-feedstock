@@ -1,7 +1,7 @@
 From 0aa11a1db1300fb9a504c575d22ef389ae69ad46 Mon Sep 17 00:00:00 2001
 From: Jason Furmanek <furmanek@us.ibm.com>
 Date: Thu, 12 Sep 2019 19:21:41 +0000
-Subject: [PATCH 4/4] Disable MKL Tests on nonx86
+Subject: [PATCH 4/5] Disable MKL Tests on nonx86
 
 ---
  module/tests/mkl_pardiso_test.py | 1 +
@@ -20,5 +20,5 @@ index b10a417..1e59d71 100644
  
          m = osqp.OSQP()
 -- 
-2.29.2.windows.3
+2.32.0.windows.2
 

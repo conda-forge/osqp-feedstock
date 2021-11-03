@@ -1,0 +1,235 @@
+From 75b391addbd5928f2ffe553b4b115d29d3661f4e Mon Sep 17 00:00:00 2001
+From: Bartolomeo Stellato <bartolomeo.stellato@gmail.com>
+Date: Thu, 14 Jan 2021 12:53:27 -0500
+Subject: [PATCH 5/5] Switch from CVXPY + ECOS to CVXOPT as a test dependency
+ (#51)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+* started converting requirement to using ecos instead of cvxpy
+
+* got cvxopt to solve the problem
+
+* Tests passing
+
+* Force doubles for cvxopt
+
+* Try to fix cvxopt installation python 3.9 (no wheels yet)
+
+* Try to build cvxopt mac/linux
+
+* Try new cvxopt wheels
+
+* Bump version: 0.6.2 → 0.6.2.post0
+
+* Fix release versioning
+
+* Minor edit
+
+* Another try versioning
+
+* Another try versioning
+
+* Another try versioning
+
+* Another try versioning
+
+* Another try versioning
+
+* Another try versioning
+
+* Another try versioning
+
+* Bump version: 0.6.2 → 0.6.2.post0
+---
+ .bumpversion.cfg                          | 14 ++++-
+ .github/workflows/build.yml               |  2 +-
+ module/codegen/files_to_generate/setup.py |  2 +-
+ module/interface.py                       |  2 +-
+ module/tests/utils.py                     | 76 +++++++++++++++--------
+ modulepurepy/_osqp.py                     |  2 +-
+ setup.py                                  |  2 +-
+ 7 files changed, 68 insertions(+), 32 deletions(-)
+
+diff --git a/.bumpversion.cfg b/.bumpversion.cfg
+index 10141c5..413b6d1 100644
+--- a/.bumpversion.cfg
++++ b/.bumpversion.cfg
+@@ -1,9 +1,19 @@
+ [bumpversion]
+-current_version = 0.6.2
++current_version = 0.6.2.post0
+ commit = True
+ tag = True
++parse = ^
++	(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)
++	(\.(?P<postkind>post)(?P<post>\d+))?  # post-release
++serialize = 
++	{major}.{minor}.{patch}.{postkind}{post}
++	{major}.{minor}.{patch}
+ 
+-[bumpversion:part:dev]
++[bumpversion:part:postkind]
++optional_value = _
++values = 
++	_
++	post
+ 
+ [bumpversion:file:setup.py]
+ 
+diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
+index 359e60b..87cd7b4 100644
+--- a/.github/workflows/build.yml
++++ b/.github/workflows/build.yml
+@@ -36,7 +36,7 @@ jobs:
+         CIBW_BUILD: cp3?-*
+         CIBW_SKIP: "*-win32 *-manylinux_i686"
+         CIBW_MANYLINUX_X86_64_IMAGE: "dockcross/manylinux2014-x64"
+-        CIBW_TEST_REQUIRES: "pytest cvxpy"
++        CIBW_TEST_REQUIRES: "pytest cvxopt"
+         CIBW_TEST_COMMAND: "pytest -s {project}/module/tests -k \"not codegen and not mkl\" "
+       run: |
+         python -m pip install cibuildwheel==1.7.4
+diff --git a/module/codegen/files_to_generate/setup.py b/module/codegen/files_to_generate/setup.py
+index c0caa22..7377d47 100644
+--- a/module/codegen/files_to_generate/setup.py
++++ b/module/codegen/files_to_generate/setup.py
+@@ -74,7 +74,7 @@ PYTHON_EXT_NAME = Extension('PYTHON_EXT_NAME',
+ 
+ 
+ setup(name='PYTHON_EXT_NAME',
+-      version='0.6.2',
++      version='0.6.2.post0',
+       author='Bartolomeo Stellato, Goran Banjac',
+       author_email='bartolomeo.stellato@gmail.com',
+       description='This is the Python module for embedded OSQP: ' +
+diff --git a/module/interface.py b/module/interface.py
+index 6ba0a74..08c8c89 100644
+--- a/module/interface.py
++++ b/module/interface.py
+@@ -1,5 +1,5 @@
+ """
+-Python interface module for OSQP solver v0.6.2
++Python interface module for OSQP solver v0.6.2.post0
+ """
+ from __future__ import print_function
+ from builtins import object
+diff --git a/module/tests/utils.py b/module/tests/utils.py
+index df1dd25..8ab9894 100644
+--- a/module/tests/utils.py
++++ b/module/tests/utils.py
+@@ -1,33 +1,59 @@
+-import cvxpy as cp
++#  import cvxpy as cp
++import numpy as np
++import scipy.sparse as spa
++from cvxopt import spmatrix, matrix, solvers
+ 
+ rel_tol = 1e-03
+ abs_tol = 1e-04
+-decimal_tol = 5
++decimal_tol = 4
+ 
+ 
+ def solve_high_accuracy(P, q, A, l, u):
+-    x = cp.Variable(q.shape)
+-    if P.nnz == 0:
+-        quad_form = 0
+-    else:
+-        quad_form = .5 * cp.quad_form(x, P)
+-
+-    if A.nnz == 0:
+-        constraints = []
+-    else:
+-        constraints = [A @ x <= u, l <= A @ x]
+-
+-    problem = cp.Problem(cp.Minimize(quad_form + q @ x),
+-                         constraints)
+-    obj = problem.solve(solver=cp.ECOS,
+-                        abstol=1e-10, reltol=1e-10,
+-                        feastol=1e-10)
+-    x_val = x.value
+-
+-    if A.nnz == 0:
+-        y_val = None
+-    else:
+-        y_val = problem.constraints[0].dual_value - \
+-            problem.constraints[1].dual_value
++
++    # Form QP in the form
++    # minimize     0.5 x' * P * x + q' * x
++    # subject to   Gx <= h
++    #              Ax = b
++    # Note P and q are the same
++
++    # Divide in equalities and inequalities
++    eq_idx = np.abs(u - l) <= 1e-7
++    A_eq = A[eq_idx]
++    b_eq = u[eq_idx]
++    A_ineq = A[~eq_idx]
++    u_ineq = u[~eq_idx]
++    l_ineq = l[~eq_idx]
++
++    # Construct QP
++    P_qp = P.tocoo().astype(np.double)
++    q_qp = q.astype(np.double)
++    A_qp = A_eq.tocoo().astype(np.double)
++    b_qp = b_eq.astype(np.double)
++    G_qp = spa.vstack([A_ineq, -A_ineq], format='coo').astype(np.double)
++    h_qp = np.hstack([u_ineq, -l_ineq]).astype(np.double)
++
++    # Construct and solve CVXOPT problem
++    P_cvxopt = spmatrix(P_qp.data, P_qp.row, P_qp.col, P_qp.shape, tc='d')
++    q_cvxopt = matrix(q_qp, tc='d')
++    A_cvxopt = spmatrix(A_qp.data, A_qp.row, A_qp.col, A_qp.shape, tc='d')
++    b_cvxopt = matrix(b_qp, tc='d')
++    G_cvxopt = spmatrix(G_qp.data, G_qp.row, G_qp.col, G_qp.shape, tc='d')
++    h_cvxopt = matrix(h_qp, tc='d')
++
++    solvers.options['show_progress'] = False
++    solution = solvers.qp(P_cvxopt, q_cvxopt,
++                          G_cvxopt, h_cvxopt, A_cvxopt, b_cvxopt)
++
++    # Recover primal variable and solution
++    x_val = np.array(solution['x']).flatten()
++    obj = solution['primal objective']
++
++    # Recover dual variables
++    dual_eq = np.array(solution['y']).flatten()
++    dual_ineq_up = np.array(solution['z']).flatten()[:int(len(h_qp)/2)]
++    dual_ineq_low = np.array(solution['z']).flatten()[int(len(h_qp)/2):]
++    y_val = np.zeros(len(u))
++    y_val[eq_idx] = dual_eq
++    y_val[~eq_idx] = dual_ineq_up - dual_ineq_low
+ 
+     return x_val, y_val, obj
+diff --git a/modulepurepy/_osqp.py b/modulepurepy/_osqp.py
+index ae8bb08..e40e623 100644
+--- a/modulepurepy/_osqp.py
++++ b/modulepurepy/_osqp.py
+@@ -330,7 +330,7 @@ class OSQP(object):
+     work    - workspace
+     """
+     def __init__(self):
+-        self._version = "0.6.2"
++        self._version = "0.6.2.post0"
+ 
+     @property
+     def version(self):
+diff --git a/setup.py b/setup.py
+index 9b8bcb5..3b8a9d5 100644
+--- a/setup.py
++++ b/setup.py
+@@ -257,7 +257,7 @@ with open('requirements.txt') as f:
+     requirements = f.read().splitlines()
+ 
+ setup(name='osqp',
+-      version='0.6.2',
++      version='0.6.2.post0',
+       author='Bartolomeo Stellato, Goran Banjac',
+       author_email='bartolomeo.stellato@gmail.com',
+       description='OSQP: The Operator Splitting QP Solver',
+-- 
+2.32.0.windows.2
+

@@ -1,7 +1,7 @@
 From c2b10bc1b5c1a1b3249a53562e2a593e5345ee58 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Thu, 29 Aug 2019 09:09:32 +0200
-Subject: [PATCH 1/4] setup: use NMake on windows
+Subject: [PATCH 1/5] setup: use NMake on windows
 
 ---
  setup.py | 6 ++----
@@ -25,5 +25,5 @@ index 535a3c0..30fa4c1 100644
      lib_name = 'osqp.lib'
      lib_subdir = ['Release']
 -- 
-2.29.2.windows.3
+2.32.0.windows.2
 
