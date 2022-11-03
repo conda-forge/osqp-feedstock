@@ -33,7 +33,7 @@ source:
     folder: osqp_sources/lin_sys/direct/qdldl/qdldl_sources
 
 build:
-  number: 3
+  number: 4
   script: {{ PYTHON }} -m pip install . --no-deps -vv
 
 requirements:
