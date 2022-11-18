@@ -53,7 +53,8 @@ requirements:
     - python
     - {{ pin_compatible('numpy') }}
     - qdldl-python
-    - scipy
+    # source uses scipy.random, which got removed
+    - scipy <1.9
     - vs2015_runtime                 # [win]
 
 test:
