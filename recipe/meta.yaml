@@ -1,6 +1,5 @@
-{% set tests_to_skip = "codegen" %}
 {% set version = "1.0.3" %}
-{% set lib_version = "0.6.3" %}
+{% set lib_version = "1.0.0" %}
 
 package:
   name: osqp
@@ -18,7 +17,6 @@ source:
 
 build:
   number: 0
-  skip: true  # [python_impl == "pypy"]
   script:
     - export SETUPTOOLS_SCM_PRETEND_VERSION={{ version }}  # [unix]
     - set "SETUPTOOLS_SCM_PRETEND_VERSION={{ version }}"   # [win]
