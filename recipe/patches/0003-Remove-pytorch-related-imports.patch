@@ -1,0 +1,41 @@
+From a2aaac161b05084c60d281ed9bd01da88d8696e2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Sebastian=20P=C3=B6lsterl?= <sebp@k-d-w.org>
+Date: Sat, 5 Apr 2025 23:21:13 +0200
+Subject: [PATCH 3/3] Remove pytorch-related imports
+
+---
+ src/osqp/tests/nn_test.py | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/src/osqp/tests/nn_test.py b/src/osqp/tests/nn_test.py
+index fe375a2..0ebb377 100644
+--- a/src/osqp/tests/nn_test.py
++++ b/src/osqp/tests/nn_test.py
+@@ -1,13 +1,11 @@
+ import numpy.random as npr
+ import numpy as np
+-import torch
+ import numpy.testing as npt
+ import scipy.sparse as spa
+ from scipy.optimize import approx_fprime
+ import pytest
+ 
+ import osqp
+-from osqp.nn.torch import OSQP
+ 
+ ATOL = 1e-2
+ RTOL = 1e-4
+@@ -24,10 +22,6 @@ verbose = True
+ # are supported and on what platforms (which is likely to change frequently),
+ # we do an early check that is seen to raise RuntimeError in these cases,
+ # and skip testing this module entirely.
+-try:
+-    torch.ones(1).cpu().numpy()
+-except RuntimeError:
+-    pytest.skip('torch/numpy mutual incompatibility', allow_module_level=True)
+ 
+ 
+ def get_grads(
+-- 
+2.49.0
+

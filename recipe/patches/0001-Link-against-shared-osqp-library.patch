@@ -1,0 +1,55 @@
+From e7243b519307d68fa92ba359b1b819b1d3f58dd7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Sebastian=20P=C3=B6lsterl?= <sebp@k-d-w.org>
+Date: Sat, 5 Apr 2025 18:32:24 +0200
+Subject: [PATCH 1/3] Link against shared osqp library
+
+---
+ CMakeLists.txt | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3334931..72c475b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -23,15 +23,7 @@ find_package(pybind11 CONFIG REQUIRED)
+ set(PYTHON_FOUND "ON")
+ set(PYTHON_INCLUDE_DIRS ${Python_INCLUDE_DIRS})
+ 
+-message(STATUS "Fetching/configuring OSQP")
+-list(APPEND CMAKE_MESSAGE_INDENT "  ")
+-FetchContent_Declare(
+-  osqp
+-  GIT_REPOSITORY https://github.com/osqp/osqp.git
+-  GIT_TAG v1.0.0
+-)
+-list(POP_BACK CMAKE_MESSAGE_INDENT)
+-FetchContent_MakeAvailable(osqp)
++find_package(osqp REQUIRED)
+ 
+ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/bindings.cpp.in
+                ${CMAKE_CURRENT_SOURCE_DIR}/src/bindings.cpp)
+@@ -40,17 +32,17 @@ install(TARGETS ${OSQP_EXT_MODULE_NAME} DESTINATION . COMPONENT python)
+ 
+ # TODO: We shouldn't have to do this once the interfaces are set up correctly
+ if(${OSQP_ALGEBRA_BACKEND} STREQUAL "builtin")
+-    target_link_libraries(ext_builtin PUBLIC pybind11::module osqpstatic)
++    target_link_libraries(ext_builtin PUBLIC pybind11::module osqp::osqp)
+ elseif(${OSQP_ALGEBRA_BACKEND} STREQUAL "mkl")
+     if(APPLE)
+-        target_link_libraries(osqp_mkl PUBLIC pybind11::module osqpstatic)
++        target_link_libraries(osqp_mkl PUBLIC pybind11::module osqp::osqp)
+     else()
+-        target_link_libraries(osqp_mkl PUBLIC pybind11::module osqpstatic $<LINK_ONLY:MKL::MKL>)
++        target_link_libraries(osqp_mkl PUBLIC pybind11::module osqp::osqp $<LINK_ONLY:MKL::MKL>)
+     endif()
+ elseif(${OSQP_ALGEBRA_BACKEND} STREQUAL "cuda")
+     enable_language(CUDA)
+     find_package(CUDA)
+     include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
+     target_link_directories(osqp_cuda PUBLIC ${CMAKE_CUDA_HOST_IMPLICIT_LINK_DIRECTORIES})
+-    target_link_libraries(osqp_cuda PUBLIC pybind11::module osqpstatic cublas cusparse)
++    target_link_libraries(osqp_cuda PUBLIC pybind11::module osqp::osqp cublas cusparse)
+ endif()
+-- 
+2.49.0
+

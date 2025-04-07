@@ -1,0 +1,84 @@
+From 9fcd69fd62c1f749075e9ba9b8a460c18f1fe929 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Sebastian=20P=C3=B6lsterl?= <sebp@k-d-w.org>
+Date: Sat, 5 Apr 2025 19:25:11 +0200
+Subject: [PATCH 2/3] Disable codegen; ABI is not compatible
+
+---
+ src/osqp/interface.py | 61 +++++--------------------------------------
+ 1 file changed, 6 insertions(+), 55 deletions(-)
+
+diff --git a/src/osqp/interface.py b/src/osqp/interface.py
+index 84be5d0..3583ee9 100644
+--- a/src/osqp/interface.py
++++ b/src/osqp/interface.py
+@@ -455,61 +455,12 @@ class OSQP:
+         prefix='',
+         compile=False,
+     ):
+-        assert self.has_capability('OSQP_CAPABILITY_CODEGEN'), 'This OSQP object does not support codegen'
+-        assert parameters in (
+-            'vectors',
+-            'matrices',
+-        ), 'Unknown parameters specification'
+-
+-        defines = self.ext.OSQPCodegenDefines()
+-        self.ext.osqp_set_default_codegen_defines(defines)
+-
+-        defines.embedded_mode = 1 if parameters == 'vectors' else 2
+-        defines.float_type = 1 if use_float else 0
+-        defines.printing_enable = 1 if printing_enable else 0
+-        defines.profiling_enable = 1 if profiling_enable else 0
+-        defines.interrupt_enable = 1 if interrupt_enable else 0
+-        defines.derivatives_enable = 0
+-
+-        folder = os.path.abspath(folder)
+-        if include_codegen_src:
+-            # https://github.com/python/importlib_resources/issues/85
+-            try:
+-                codegen_src_path = importlib.resources.files('osqp.codegen').joinpath('codegen_src')
+-                shutil.copytree(codegen_src_path, folder, dirs_exist_ok=force_rewrite)
+-            except AttributeError:
+-                handle = importlib.resources.path('osqp.codegen', 'codegen_src')
+-                with handle as codegen_src_path:
+-                    shutil.copytree(codegen_src_path, folder, dirs_exist_ok=force_rewrite)
+-
+-        # The C codegen call expects the folder to exist and have a trailing slash
+-        os.makedirs(folder, exist_ok=True)
+-        if not folder.endswith(os.path.sep):
+-            folder += os.path.sep
+-
+-        status = self._solver.codegen(folder, prefix, defines)
+-        assert status == 0, f'Codegen failed with error code {status}'
+-
+-        if extension_name is not None:
+-            assert include_codegen_src, 'If generating python wrappers, include_codegen_src must be True'
+-            template_vars = dict(
+-                prefix=prefix,
+-                extension_name=extension_name,
+-                embedded_mode=defines.embedded_mode,
+-            )
+-            self._render_pywrapper_files(folder, **template_vars)
+-            if compile:
+-                subprocess.check_call(
+-                    [
+-                        sys.executable,
+-                        'setup.py',
+-                        'build_ext',
+-                        '--inplace',
+-                    ],
+-                    cwd=folder,
+-                )
+-
+-        return folder
++        warnings.warn(
++            "conda-forge builds of osqp are built on shared libraries; "
++            "by the design of osqp, these have a different Application "
++            "Binary Interface (ABI) than those required for codegen, "
++            "and this is therefore not supported."
++        )
+ 
+     def adjoint_derivative_compute(self, dx=None, dy=None):
+         """
+-- 
+2.49.0
+
