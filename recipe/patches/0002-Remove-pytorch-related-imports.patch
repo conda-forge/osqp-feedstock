@@ -25,14 +25,17 @@ index fe375a2..0ebb377 100644
  
  ATOL = 1e-2
  RTOL = 1e-4
-@@ -24,10 +22,6 @@ verbose = True
+@@ -24,10 +22,12 @@ verbose = True
  # are supported and on what platforms (which is likely to change frequently),
  # we do an early check that is seen to raise RuntimeError in these cases,
  # and skip testing this module entirely.
--try:
--    torch.ones(1).cpu().numpy()
+ try:
++    import torch
++from osqp.nn.torch import OSQP
+     torch.ones(1).cpu().numpy()
 -except RuntimeError:
--    pytest.skip('torch/numpy mutual incompatibility', allow_module_level=True)
++except (ImportError, RuntimeError):
+     pytest.skip('torch/numpy mutual incompatibility', allow_module_level=True)
  
  
  def get_grads(

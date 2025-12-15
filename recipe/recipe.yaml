@@ -13,13 +13,14 @@ source:
   sha256: fe555180a1ad7e25bb3e3df787a1539de664a9fd0b1639271f8d5553bc22049e
   patches:
     - patches/0001-Link-against-shared-osqp-library.patch
-    # remove pytorch imports on ppc; the actual test is skipped below, this is to unbreak collection
-    - if: ppc64le
-      then: patches/0002-Remove-pytorch-related-imports.patch
+    # remove pytorch imports in tests; this reduces reliance on pytorch being available
+    # on conda-forge. (for eg: pytorch takes a while to get new python version
+    # support available)
+    - patches/0002-Remove-pytorch-related-imports.patch
     - patches/0003-disable-codegen-ABI-is-not-compatible.patch
 
 build:
-  number: 2
+  number: 3
   script:
     - if: unix
       then:
@@ -76,8 +77,6 @@ tests:
         - if: x86_64
           then: blas * mkl
         - pytest
-        - if: not ppc64le
-          then: pytorch
     script:
       interpreter: python
       content:
@@ -88,10 +87,6 @@ tests:
         - if: aarch64 or ppc64le
           then:
             - 'tests_to_skip += " or test_multithread"'
-        # we don't have pytorch on ppc; skip test module that needs it
-        - if: ppc64le
-          then:
-            - 'tests_to_skip += " or nn_test.py"'
         - 'args = ["--pyargs", "osqp", "-k", f"not ({tests_to_skip})"]'
         - 'print(f"running pytest with args: {args}")'
         - 'pytest.main(args)'
