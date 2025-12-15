@@ -31,7 +31,7 @@ index fe375a2..0ebb377 100644
  # and skip testing this module entirely.
  try:
 +    import torch
-+from osqp.nn.torch import OSQP
++    from osqp.nn.torch import OSQP
      torch.ones(1).cpu().numpy()
 -except RuntimeError:
 +except (ImportError, RuntimeError):
