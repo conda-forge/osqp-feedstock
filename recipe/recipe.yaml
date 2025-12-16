@@ -20,7 +20,7 @@ source:
     - patches/0003-disable-codegen-ABI-is-not-compatible.patch
 
 build:
-  number: 3
+  number: 4
   script:
     - if: unix
       then:
