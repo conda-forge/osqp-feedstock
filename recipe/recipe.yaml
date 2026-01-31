@@ -1,7 +1,7 @@
 schema_version: 1
 
 context:
-  version: 1.0.5
+  version: "1.1.0"
   lib_version: 1.0.0
 
 package:
@@ -10,7 +10,7 @@ package:
 
 source:
   url: https://github.com/osqp/osqp-python/archive/refs/tags/v${{ version }}.tar.gz
-  sha256: fe555180a1ad7e25bb3e3df787a1539de664a9fd0b1639271f8d5553bc22049e
+  sha256: b98c181d0100d4705f2c82538fe882b566464497b6b87d12b3b9321c7b6ac25e
   patches:
     - patches/0001-Link-against-shared-osqp-library.patch
     # remove pytorch imports in tests; this reduces reliance on pytorch being available
@@ -20,7 +20,7 @@ source:
     - patches/0003-disable-codegen-ABI-is-not-compatible.patch
 
 build:
-  number: 4
+  number: 0
   script:
     - if: unix
       then:
