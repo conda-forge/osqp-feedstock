@@ -18,9 +18,10 @@ source:
     # support available)
     - patches/0002-Remove-pytorch-related-imports.patch
     - patches/0003-disable-codegen-ABI-is-not-compatible.patch
+    - patches/0005-Add-setuptools-scm-to-build-requirements.patch
 
 build:
-  number: 1
+  number: 2
   script:
     - if: unix
       then:
