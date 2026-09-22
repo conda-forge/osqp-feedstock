@@ -1,0 +1,31 @@
+From a07025763b2c48e9734325952b7ae0159eb836d4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Sebastian=20P=C3=B6lsterl?= <sebp@k-d-w.org>
+Date: Tue, 22 Sep 2026 20:29:13 +0200
+Subject: [PATCH 5/5] Add setuptools-scm to build requirements
+
+---
+ pyproject.toml | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/pyproject.toml b/pyproject.toml
+index 4cf3c55..4be6704 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -1,5 +1,5 @@
+ [build-system]
+-requires = ["scikit-build-core", "pybind11>=2.13"]
++requires = ["scikit-build-core", "pybind11>=2.13", "setuptools-scm"]
+ build-backend = "scikit_build_core.build"
+ 
+ [project]
+@@ -21,7 +21,6 @@ dependencies = [
+     "jinja2",
+     "numpy>=1.7",
+     "scipy>=0.13.2",
+-    "setuptools",
+     "joblib",
+ ]
+ 
+-- 
+2.50.1 (Apple Git-155)
+
